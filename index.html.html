@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Cientista Mirim - Ciências 2º Ano</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #fce7f3 100%);
+            min-height: 100vh;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        h1, h2, h3, .font-fun {
+            font-family: 'Fredoka', cursive;
+        }
+
+        .btn-bounce {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+        }
+        .btn-bounce:hover {
+            transform: scale(1.05) translateY(-3px);
+        }
+        .btn-bounce:active {
+            transform: scale(0.95) translateY(2px);
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-interactive {
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .card-interactive:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.15);
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .pulse-animation {
+            animation: pulse-soft 2s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-animation {
+            animation: float 3s infinite ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .sky-canvas {
+            background: linear-gradient(to bottom, #38bdf8, #bae6fd);
+            transition: background 0.5s ease;
+        }
+        .sky-night {
+            background: linear-gradient(to bottom, #0f172a, #1e1b4b) !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800">
+
+    <!-- Header principal -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b-4 border-yellow-400 px-4 py-3 shadow-md">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showMenu()">
+                <div class="w-12 h-12 bg-yellow-400 rounded-2xl flex items-center justify-center text-2xl text-white shadow-lg transform -rotate-6">
+                    <i class="fa-solid fa-flask"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-sky-600 leading-none">Cientista Mirim</h1>
+                    <span class="text-xs md:text-sm font-semibold text-amber-500">Ciências • 2º Ano Fund I</span>
+                </div>
+            </div>
+
+            <!-- Placar de Estrelas e Pontos -->
+            <div class="flex items-center gap-4 bg-amber-50 px-4 py-1.5 rounded-full border-2 border-amber-200">
+                <div class="flex items-center gap-1 text-amber-500 font-bold text-lg">
+                    <i class="fa-solid fa-star text-yellow-400 text-xl animate-bounce"></i>
+                    <span id="global-stars">0</span>
+                </div>
+                <div class="h-6 w-0.5 bg-amber-200"></div>
+                <div class="flex items-center gap-1 text-sky-600 font-bold text-lg">
+                    <i class="fa-solid fa-trophy text-amber-400"></i>
+                    <span id="global-score">0</span> pts
+                </div>
+            </div>
+
+            <!-- Botão Som e Início -->
+            <div class="flex gap-2">
+                <button id="sound-toggle" onclick="toggleSound()" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold btn-bounce">
+                    <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+                </button>
+                <button onclick="showMenu()" class="px-3 py-2 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 btn-bounce">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="hidden sm:inline">Menu</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <!-- ================= SEÇÃO: MENU PRINCIPAL ================= -->
+        <section id="view-menu" class="space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="text-3xl md:text-4xl font-bold text-sky-700">Escolha um Desafio! 🔬</h2>
+                <p class="text-slate-600 text-base md:text-lg">Explore o mundo fascinante da ciência, complete os 5 módulos e ganhe o seu Certificado de Cientista Mirim!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                
+                <!-- Módulo 1 Card -->
+                <div onclick="startModule(1)" class="bg-white rounded-3xl p-6 card-shadow card-interactive border-b-8 border-sky-400 flex flex-col justify-between relative overflow-hidden group">
+                    <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-sky-100 rounded-full group-hover:scale-125 transition-transform duration-500 opacity-50"></div>
+                    <div>
+                        <div class="w-14 h-14 bg-sky-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-md">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <span class="text-xs font-bold text-sky-500 uppercase tracking-wider">Módulo 1</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-1">Materiais e Propriedades</h3>
+                        <p class="text-sm text-slate-500 mt-2">Descubra de que são feitos os objetos do dia a dia e para que eles servem!</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between">
+                        <span id="m1-status" class="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-700 rounded-full">⭐ 0/3 Estrelas</span>
+                        <span class="text-sky-500 font-bold group-hover:translate-x-1 transition-transform">Jogar <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- Módulo 2 Card -->
+                <div onclick="startModule(2)" class="bg-white rounded-3xl p-6 card-shadow card-interactive border-b-8 border-emerald-400 flex flex-col justify-between relative overflow-hidden group">
+                    <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-100 rounded-full group-hover:scale-125 transition-transform duration-500 opacity-50"></div>
+                    <div>
+                        <div class="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-md">
+                            <i class="fa-solid fa-user-doctor"></i>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-500 uppercase tracking-wider">Módulo 2</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-1">Profissões e Ferramentas</h3>
+                        <p class="text-sm text-slate-500 mt-2">Ajude os trabalhadores a encontrarem os objetos certos e seguros para seu trabalho!</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between">
+                        <span id="m2-status" class="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-700 rounded-full">⭐ 0/3 Estrelas</span>
+                        <span class="text-emerald-500 font-bold group-hover:translate-x-1 transition-transform">Jogar <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- Módulo 3 Card -->
+                <div onclick="startModule(3)" class="bg-white rounded-3xl p-6 card-shadow card-interactive border-b-8 border-amber-400 flex flex-col justify-between relative overflow-hidden group">
+                    <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-100 rounded-full group-hover:scale-125 transition-transform duration-500 opacity-50"></div>
+                    <div>
+                        <div class="w-14 h-14 bg-amber-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-md">
+                            <i class="fa-solid fa-sun"></i>
+                        </div>
+                        <span class="text-xs font-bold text-amber-500 uppercase tracking-wider">Módulo 3</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-1">O Sol e a Terra</h3>
+                        <p class="text-sm text-slate-500 mt-2">Explore o movimento do Sol, a linha do horizonte e a rotação da Terra!</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between">
+                        <span id="m3-status" class="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-700 rounded-full">⭐ 0/3 Estrelas</span>
+                        <span class="text-amber-500 font-bold group-hover:translate-x-1 transition-transform">Jogar <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- Módulo 4 Card -->
+                <div onclick="startModule(4)" class="bg-white rounded-3xl p-6 card-shadow card-interactive border-b-8 border-indigo-400 flex flex-col justify-between relative overflow-hidden group">
+                    <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-100 rounded-full group-hover:scale-125 transition-transform duration-500 opacity-50"></div>
+                    <div>
+                        <div class="w-14 h-14 bg-indigo-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-md">
+                            <i class="fa-solid fa-moon"></i>
+                        </div>
+                        <span class="text-xs font-bold text-indigo-500 uppercase tracking-wider">Módulo 4</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-1">Animais Diurnos e Noturnos</h3>
+                        <p class="text-sm text-slate-500 mt-2">Separe os animais que gostam do Dia daqueles que preferem a Noite!</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between">
+                        <span id="m4-status" class="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-700 rounded-full">⭐ 0/3 Estrelas</span>
+                        <span class="text-indigo-500 font-bold group-hover:translate-x-1 transition-transform">Jogar <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- Módulo 5 Card -->
+                <div onclick="startModule(5)" class="bg-white rounded-3xl p-6 card-shadow card-interactive border-b-8 border-rose-400 flex flex-col justify-between relative overflow-hidden group md:col-span-2 lg:col-span-1">
+                    <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-100 rounded-full group-hover:scale-125 transition-transform duration-500 opacity-50"></div>
+                    <div>
+                        <div class="w-14 h-14 bg-rose-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-md">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <span class="text-xs font-bold text-rose-500 uppercase tracking-wider">Módulo 5</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-1">Detetive da Segurança</h3>
+                        <p class="text-sm text-slate-500 mt-2">Encontre os perigos em casa e aprenda a prevenir acidentes!</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between">
+                        <span id="m5-status" class="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-700 rounded-full">⭐ 0/3 Estrelas</span>
+                        <span class="text-rose-500 font-bold group-hover:translate-x-1 transition-transform">Jogar <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Botão Certificado Final -->
+            <div class="text-center pt-6">
+                <button id="btn-certificate" onclick="showCertificate()" class="px-8 py-4 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white text-lg font-bold rounded-2xl shadow-lg btn-bounce hidden items-center gap-3 mx-auto">
+                    <i class="fa-solid fa-award text-2xl"></i>
+                    Ver Meu Certificado Final!
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 1: MATERIAIS E PROPRIEDADES ================= -->
+        <section id="view-module-1" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 card-shadow border-4 border-sky-300">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="px-3 py-1 bg-sky-100 text-sky-700 font-bold text-xs rounded-full">Módulo 1</span>
+                        <h2 class="text-2xl font-bold text-sky-800">Associe o Objeto ao Seu Material e Função</h2>
+                    </div>
+                    <button onclick="showMenu()" class="text-slate-400 hover:text-slate-600 font-bold text-xl"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <p class="text-slate-600 mb-6">Clique primeiro em um Objeto e depois clique na Caixa Correta de seu Material e Função!</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Lista de Objetos -->
+                    <div class="space-y-3">
+                        <h3 class="font-bold text-slate-700 text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-box-open text-sky-500"></i> Objetos:
+                        </h3>
+                        <div id="m1-objects" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                    </div>
+
+                    <!-- Lista de Materiais / Funções -->
+                    <div class="space-y-3">
+                        <h3 class="font-bold text-slate-700 text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-bullseye text-emerald-500"></i> Material e Função:
+                        </h3>
+                        <div id="m1-targets" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 2: PROFISSÕES E FERRAMENTAS ================= -->
+        <section id="view-module-2" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 card-shadow border-4 border-emerald-300">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 font-bold text-xs rounded-full">Módulo 2</span>
+                        <h2 class="text-2xl font-bold text-emerald-800">Trabalhadores e seus Objetos</h2>
+                    </div>
+                    <button onclick="showMenu()" class="text-slate-400 hover:text-slate-600 font-bold text-xl"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="max-w-2xl mx-auto bg-emerald-50 p-6 rounded-2xl text-center space-y-4">
+                    <div id="m2-worker-card" class="bg-white p-6 rounded-2xl card-shadow flex flex-col items-center"></div>
+                    <div id="m2-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 3: O SOL, TERRA E LINHA DO HORIZONTE ================= -->
+        <section id="view-module-3" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 card-shadow border-4 border-amber-300">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="px-3 py-1 bg-amber-100 text-amber-700 font-bold text-xs rounded-full">Módulo 3</span>
+                        <h2 class="text-2xl font-bold text-amber-800">O Movimento Aparente do Sol</h2>
+                    </div>
+                    <button onclick="showMenu()" class="text-slate-400 hover:text-slate-600 font-bold text-xl"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-slate-600">Arraste a barra para mover o Sol do Leste (Nascendo) até o Oeste (Se pondo) e observe a linha do horizonte e as sombras!</p>
+                    
+                    <div id="sky-box" class="sky-canvas h-64 rounded-2xl relative overflow-hidden flex flex-col justify-between p-4 border-2 border-sky-300">
+                        <div class="flex justify-between text-white font-bold text-sm z-10">
+                            <span class="bg-black/30 px-3 py-1 rounded-full">🌅 LESTE (Nascente)</span>
+                            <span id="sky-time-text" class="bg-amber-400 text-slate-800 px-3 py-1 rounded-full">Meio-Dia (12:00)</span>
+                            <span class="bg-black/30 px-3 py-1 rounded-full">🌇 OESTE (Poente)</span>
+                        </div>
+
+                        <!-- Sol Animado -->
+                        <div id="sun-element" class="absolute w-14 h-14 bg-yellow-300 rounded-full border-4 border-yellow-100 shadow-lg flex items-center justify-center text-amber-600 text-2xl transition-all duration-100" style="left: 50%; top: 20%;">
+                            <i class="fa-solid fa-sun animate-spin" style="animation-duration: 10s;"></i>
+                        </div>
+
+                        <!-- Estrelas para Noite -->
+                        <div id="stars-element" class="absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none">
+                            <i class="fa-solid fa-star text-white absolute top-6 left-12 text-sm"></i>
+                            <i class="fa-solid fa-star text-white absolute top-10 left-1/3 text-xs"></i>
+                            <i class="fa-solid fa-star text-white absolute top-8 right-16 text-sm"></i>
+                            <i class="fa-solid fa-moon text-yellow-200 absolute top-8 right-8 text-3xl"></i>
+                        </div>
+
+                        <!-- Linha do Horizonte / Solo -->
+                        <div class="z-10 relative">
+                            <div class="relative w-20 mx-auto flex flex-col items-center">
+                                <div class="text-emerald-600 text-6xl drop-shadow-md z-10"><i class="fa-solid fa-tree"></i></div>
+                                <div id="tree-shadow" class="h-3 bg-black/40 rounded-full transition-all duration-100 -mt-2 z-0" style="width: 30px; transform: skewX(0deg);"></div>
+                            </div>
+
+                            <div class="w-full h-8 bg-emerald-600 border-t-4 border-amber-500 flex items-center justify-center text-white text-xs font-bold tracking-wider rounded-b-xl">
+                                🌄 LINHA DO HORIZONTE
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider de controle do Sol -->
+                    <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="font-bold text-amber-600 text-sm">Manhã</span>
+                        <input type="range" id="sun-slider" min="0" max="100" value="50" oninput="updateSunPosition(this.value)" class="w-full accent-amber-500 h-3 bg-slate-200 rounded-lg cursor-pointer">
+                        <span class="font-bold text-indigo-900 text-sm">Noite</span>
+                    </div>
+
+                    <div id="m3-question-box" class="bg-amber-50 p-5 rounded-2xl border-2 border-amber-200 mt-4 space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 4: ANIMAIS DIURNOS E NOTURNOS ================= -->
+        <section id="view-module-4" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 card-shadow border-4 border-indigo-300">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 font-bold text-xs rounded-full">Módulo 4</span>
+                        <h2 class="text-2xl font-bold text-indigo-900">Classificador de Animais</h2>
+                    </div>
+                    <button onclick="showMenu()" class="text-slate-400 hover:text-slate-600 font-bold text-xl"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <p class="text-slate-600">Veja a ilustração do animal em destaque e escolha se ele tem hábitos Diurnos (Dia) ou Noturnos (Noite)!</p>
+
+                <div class="max-w-xl mx-auto space-y-6">
+                    <!-- Cartão do Animal Atual -->
+                    <div id="m4-animal-card" class="bg-slate-50 border-2 border-indigo-100 p-6 rounded-3xl text-center space-y-3 card-shadow flex flex-col items-center"></div>
+
+                    <!-- Botões de Escolha -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="classifyAnimal('diurno')" class="p-5 bg-gradient-to-br from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white rounded-2xl font-bold text-lg shadow-md btn-bounce flex flex-col items-center gap-2">
+                            <i class="fa-solid fa-sun text-3xl"></i>
+                            <span>DIURNO</span>
+                            <span class="text-xs font-normal opacity-90">(Ativo de Dia)</span>
+                        </button>
+                        <button onclick="classifyAnimal('noturno')" class="p-5 bg-gradient-to-br from-indigo-700 to-purple-800 hover:from-indigo-800 hover:to-purple-900 text-white rounded-2xl font-bold text-lg shadow-md btn-bounce flex flex-col items-center gap-2">
+                            <i class="fa-solid fa-moon text-3xl text-yellow-300"></i>
+                            <span>NOTURNO</span>
+                            <span class="text-xs font-normal opacity-90">(Ativo de Noite)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 5: PREVENÇÃO DE ACIDENTES ================= -->
+        <section id="view-module-5" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 card-shadow border-4 border-rose-300">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="px-3 py-1 bg-rose-100 text-rose-700 font-bold text-xs rounded-full">Módulo 5</span>
+                        <h2 class="text-2xl font-bold text-rose-800">Detetive da Segurança Doméstica</h2>
+                    </div>
+                    <button onclick="showMenu()" class="text-slate-400 hover:text-slate-600 font-bold text-xl"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <p class="text-slate-600">Clique nas situações perigosas da casa para aprender como evitar acidentes!</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="m5-hazards-grid"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal de Feedback Positivo / Explicação -->
+    <div id="modal-feedback" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 card-shadow border-4 border-yellow-400 transform transition-all scale-95 opacity-0" id="modal-feedback-content">
+            <div id="modal-icon" class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 id="modal-title" class="text-2xl font-bold text-slate-800">Muito Bem!</h3>
+            <p id="modal-msg" class="text-slate-600">Você acertou e ganhou pontos!</p>
+            <button onclick="closeModal()" class="w-full py-3 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-2xl shadow-md btn-bounce">
+                Continuar! 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Vitória de Módulo -->
+    <div id="modal-victory" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 card-shadow border-4 border-amber-400">
+            <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-4xl mx-auto float-animation">
+                <i class="fa-solid fa-crown text-yellow-400"></i>
+            </div>
+            <h3 class="text-3xl font-bold text-amber-600">Parabéns! 🎉</h3>
+            <p id="victory-msg" class="text-slate-600">Você completou o módulo com sucesso!</p>
+            
+            <div class="flex justify-center gap-2 text-3xl text-yellow-400 py-2">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+            </div>
+
+            <button onclick="closeVictoryModal()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg rounded-2xl shadow-md btn-bounce">
+                Ir para o Menu Principal 🌟
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Certificado do Cientista Mirim -->
+    <div id="modal-certificate" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-amber-50 rounded-3xl max-w-2xl w-full p-8 text-center space-y-6 card-shadow border-8 border-yellow-400 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-200 rounded-full opacity-50"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-sky-200 rounded-full opacity-50"></div>
+
+            <div class="flex justify-between items-center border-b-2 border-amber-200 pb-4">
+                <div class="text-amber-600 font-bold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-award text-2xl"></i> DIPLOMA DE CIENTISTA MIRIM
+                </div>
+                <button onclick="closeCertificate()" class="text-slate-400 hover:text-slate-600 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-3">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800 font-fun">CERTIFICADO DE EXCELÊNCIA</h2>
+                <p class="text-slate-600">Certificamos com muito orgulho que o aluno ou aluna concluiu todos os estudos de Ciências do 2º Ano!</p>
+                
+                <div class="py-4 bg-white rounded-2xl border-2 border-dashed border-amber-300 max-w-md mx-auto">
+                    <span class="text-xs uppercase text-slate-400 font-bold">Mestre das Propriedades, Terra e Natureza</span>
+                    <div class="text-2xl font-bold text-sky-600 mt-1" id="cert-stars-total">⭐ 15 / 15 Estrelas Conquistadas</div>
+                    <div class="text-lg font-semibold text-emerald-600" id="cert-score-total">Pontuação Final: 150 pts</div>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-4 pt-2">
+                <button onclick="window.print()" class="px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl btn-bounce flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Imprimir / Salvar
+                </button>
+                <button onclick="closeCertificate()" class="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl btn-bounce">
+                    Voltar ao Jogo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ================= ILUSTRAÇÕES SVG VETORIAIS DOS ANIMAIS ================= */
+        const animalSVGs = {
+            coruja: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <circle cx="50" cy="55" r="32" fill="#8B5E3C"/>
+                <circle cx="50" cy="55" r="26" fill="#A0724E"/>
+                <ellipse cx="50" cy="65" rx="18" ry="12" fill="#EED9C4"/>
+                <circle cx="38" cy="45" r="13" fill="#FFF"/>
+                <circle cx="62" cy="45" r="13" fill="#FFF"/>
+                <circle cx="38" cy="45" r="7" fill="#1E293B"/>
+                <circle cx="62" cy="45" r="7" fill="#1E293B"/>
+                <circle cx="40" cy="43" r="2.5" fill="#FFF"/>
+                <circle cx="64" cy="43" r="2.5" fill="#FFF"/>
+                <polygon points="50,50 45,58 55,58" fill="#F59E0B"/>
+                <polygon points="30,28 42,36 34,42" fill="#5C3D26"/>
+                <polygon points="70,28 58,36 66,42" fill="#5C3D26"/>
+            </svg>`,
+            borboleta: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <path d="M 50 50 Q 15 15 20 45 Q 25 60 50 55" fill="#EC4899"/>
+                <path d="M 50 50 Q 85 15 80 45 Q 75 60 50 55" fill="#EC4899"/>
+                <path d="M 50 55 Q 20 60 25 80 Q 40 90 50 65" fill="#F472B6"/>
+                <path d="M 50 55 Q 80 60 75 80 Q 60 90 50 65" fill="#F472B6"/>
+                <circle cx="33" cy="38" r="5" fill="#FDE047"/>
+                <circle cx="67" cy="38" r="5" fill="#FDE047"/>
+                <ellipse cx="50" cy="55" rx="4" ry="22" fill="#1E293B"/>
+                <circle cx="50" cy="32" r="6" fill="#1E293B"/>
+                <path d="M 48 28 Q 42 15 36 12" stroke="#1E293B" stroke-width="2" fill="none"/>
+                <path d="M 52 28 Q 58 15 64 12" stroke="#1E293B" stroke-width="2" fill="none"/>
+            </svg>`,
+            morcego: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <path d="M 50 45 Q 30 20 10 35 Q 20 60 35 55 Q 42 70 50 55 Q 58 70 65 55 Q 80 60 90 35 Q 70 20 50 45 Z" fill="#334155"/>
+                <ellipse cx="50" cy="52" rx="14" ry="18" fill="#475569"/>
+                <circle cx="50" cy="38" r="11" fill="#475569"/>
+                <polygon points="41,30 35,16 46,26" fill="#334155"/>
+                <polygon points="59,30 65,16 54,26" fill="#334155"/>
+                <circle cx="45" cy="36" r="3" fill="#EF4444"/>
+                <circle cx="55" cy="36" r="3" fill="#EF4444"/>
+                <polygon points="47,43 50,47 53,43" fill="#FFF"/>
+            </svg>`,
+            cachorro: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <ellipse cx="50" cy="60" rx="26" ry="22" fill="#D97706"/>
+                <circle cx="50" cy="42" r="22" fill="#F59E0B"/>
+                <ellipse cx="28" cy="45" rx="8" ry="16" fill="#B45309"/>
+                <ellipse cx="72" cy="45" rx="8" ry="16" fill="#B45309"/>
+                <circle cx="43" cy="38" r="3.5" fill="#1E293B"/>
+                <circle cx="57" cy="38" r="3.5" fill="#1E293B"/>
+                <ellipse cx="50" cy="46" rx="6" ry="4" fill="#1E293B"/>
+                <path d="M 50 50 Q 45 56 40 52" stroke="#1E293B" stroke-width="2" fill="none"/>
+                <path d="M 50 50 Q 55 56 60 52" stroke="#1E293B" stroke-width="2" fill="none"/>
+                <path d="M 50 50 Q 52 58 48 60" fill="#EF4444"/>
+            </svg>`,
+            vagalume: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <ellipse cx="50" cy="70" rx="16" ry="14" fill="#FACC15" class="animate-pulse"/>
+                <ellipse cx="50" cy="50" rx="12" ry="10" fill="#334155"/>
+                <circle cx="50" cy="34" r="8" fill="#1E293B"/>
+                <path d="M 45 42 Q 20 30 25 55 Q 40 60 47 52" fill="#94A3B8" opacity="0.7"/>
+                <path d="M 55 42 Q 80 30 75 55 Q 60 60 53 52" fill="#94A3B8" opacity="0.7"/>
+                <circle cx="47" cy="32" r="2" fill="#FFF"/>
+                <circle cx="53" cy="32" r="2" fill="#FFF"/>
+            </svg>`,
+            passarinho: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <ellipse cx="46" cy="56" rx="22" ry="18" fill="#0EA5E9"/>
+                <circle cx="58" cy="38" r="16" fill="#38BDF8"/>
+                <polygon points="72,38 88,42 72,46" fill="#F59E0B"/>
+                <circle cx="62" cy="34" r="3.5" fill="#1E293B"/>
+                <circle cx="63" cy="33" r="1" fill="#FFF"/>
+                <path d="M 28 58 Q 10 50 18 68 Z" fill="#0284C7"/>
+                <ellipse cx="44" cy="60" rx="10" ry="6" fill="#0284C7"/>
+            </svg>`,
+            sapo: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <ellipse cx="50" cy="62" rx="28" ry="20" fill="#22C55E"/>
+                <ellipse cx="50" cy="65" rx="18" ry="12" fill="#BBF7D0"/>
+                <circle cx="36" cy="40" r="10" fill="#22C55E"/>
+                <circle cx="64" cy="40" r="10" fill="#22C55E"/>
+                <circle cx="36" cy="40" r="6" fill="#FFF"/>
+                <circle cx="64" cy="40" r="6" fill="#FFF"/>
+                <circle cx="36" cy="40" r="3" fill="#1E293B"/>
+                <circle cx="64" cy="40" r="3" fill="#1E293B"/>
+                <path d="M 38 56 Q 50 64 62 56" stroke="#15803D" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>`,
+            galo: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <ellipse cx="45" cy="60" rx="20" ry="18" fill="#EA580C"/>
+                <path d="M 55 48 C 55 35 65 30 65 30 C 65 30 70 42 60 52 Z" fill="#DC2626"/>
+                <circle cx="60" cy="36" r="12" fill="#F97316"/>
+                <polygon points="70,36 84,40 70,44" fill="#FACC15"/>
+                <path d="M 58 24 Q 62 14 68 22 Q 72 12 76 24" fill="#EF4444"/>
+                <circle cx="64" cy="32" r="2.5" fill="#1E293B"/>
+            </svg>`,
+            abelha: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <ellipse cx="50" cy="55" rx="22" ry="18" fill="#EAB308"/>
+                <path d="M 42 38 L 42 72 M 52 37 L 52 73 M 62 39 L 62 71" stroke="#1E293B" stroke-width="4"/>
+                <circle cx="30" cy="52" r="10" fill="#1E293B"/>
+                <circle cx="28" cy="50" r="2.5" fill="#FFF"/>
+                <path d="M 45 38 Q 35 15 55 22 Q 52 35 48 38" fill="#E0F2FE" opacity="0.8"/>
+                <path d="M 58 38 Q 65 15 78 28 Q 68 38 60 38" fill="#E0F2FE" opacity="0.8"/>
+            </svg>`,
+            gato: `<svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-md">
+                <ellipse cx="50" cy="62" rx="22" ry="18" fill="#94A3B8"/>
+                <circle cx="50" cy="42" r="18" fill="#CBD5E1"/>
+                <polygon points="34,32 30,14 44,26" fill="#94A3B8"/>
+                <polygon points="66,32 70,14 56,26" fill="#94A3B8"/>
+                <ellipse cx="43" cy="40" rx="3" ry="5" fill="#FACC15"/>
+                <ellipse cx="57" cy="40" rx="3" ry="5" fill="#FACC15"/>
+                <ellipse cx="43" cy="40" rx="1" ry="4" fill="#1E293B"/>
+                <ellipse cx="57" cy="40" rx="1" ry="4" fill="#1E293B"/>
+                <polygon points="48,46 50,49 52,46" fill="#F472B6"/>
+            </svg>`
+        };
+
+        /* ================= ESTADO GLOBAL DO JOGO ================= */
+        let gameState = {
+            soundEnabled: true,
+            score: 0,
+            stars: { m1: 0, m2: 0, m3: 0, m4: 0, m5: 0 },
+            completedModules: { m1: false, m2: false, m3: false, m4: false, m5: false }
+        };
+
+        /* ================= WEB AUDIO API (SISTEMA DE SONS) ================= */
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.08);
+                osc.frequency.setValueAtTime(783.99, now + 0.16);
+                osc.frequency.setValueAtTime(1046.50, now + 0.24);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(180, now + 0.15);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'victory') {
+                const notes = [523.25, 659.25, 783.99, 1046.50, 880, 1046.50];
+                const times = [0, 0.12, 0.24, 0.36, 0.52, 0.68];
+                notes.forEach((freq, idx) => {
+                    const noteOsc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    noteOsc.type = 'triangle';
+                    noteOsc.frequency.setValueAtTime(freq, now + times[idx]);
+                    noteGain.gain.setValueAtTime(0.2, now + times[idx]);
+                    noteGain.gain.exponentialRampToValueAtTime(0.001, now + times[idx] + 0.25);
+                    noteOsc.connect(noteGain);
+                    noteGain.connect(audioCtx.destination);
+                    noteOsc.start(now + times[idx]);
+                    noteOsc.stop(now + times[idx] + 0.25);
+                });
+            }
+        }
+
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (gameState.soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                playSound('click');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark';
+            }
+        }
+
+        function hideAllViews() {
+            document.getElementById('view-menu').classList.add('hidden');
+            for(let i=1; i<=5; i++) {
+                document.getElementById(`view-module-${i}`).classList.add('hidden');
+            }
+        }
+
+        function showMenu() {
+            playSound('click');
+            hideAllViews();
+            document.getElementById('view-menu').classList.remove('hidden');
+            updateUIState();
+        }
+
+        function startModule(modNum) {
+            playSound('click');
+            hideAllViews();
+            document.getElementById(`view-module-${modNum}`).classList.remove('hidden');
+            
+            if (modNum === 1) initModule1();
+            if (modNum === 2) initModule2();
+            if (modNum === 3) initModule3();
+            if (modNum === 4) initModule4();
+            if (modNum === 5) initModule5();
+        }
+
+        function addScore(pts) {
+            gameState.score += pts;
+            document.getElementById('global-score').textContent = gameState.score;
+        }
+
+        function setStars(modKey, count) {
+            gameState.stars[modKey] = Math.max(gameState.stars[modKey], count);
+            let totalStars = Object.values(gameState.stars).reduce((a, b) => a + b, 0);
+            document.getElementById('global-stars').textContent = totalStars;
+            document.getElementById(`${modKey}-status`).textContent = `⭐ ${gameState.stars[modKey]}/3 Estrelas`;
+        }
+
+        function updateUIState() {
+            let totalStars = Object.values(gameState.stars).reduce((a, b) => a + b, 0);
+            if (totalStars >= 10 || Object.values(gameState.completedModules).every(v => v)) {
+                document.getElementById('btn-certificate').classList.remove('hidden');
+                document.getElementById('btn-certificate').classList.add('flex');
+            }
+        }
+
+        function showFeedback(isCorrect, title, msg, callback) {
+            if (isCorrect) playSound('correct');
+            else playSound('wrong');
+
+            const modal = document.getElementById('modal-feedback');
+            const content = document.getElementById('modal-feedback-content');
+            const icon = document.getElementById('modal-icon');
+            
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-msg').textContent = msg;
+
+            if (isCorrect) {
+                icon.className = "w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner";
+                icon.innerHTML = '<i class="fa-solid fa-check"></i>';
+            } else {
+                icon.className = "w-20 h-20 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner";
+                icon.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            window.currentModalCallback = callback;
+        }
+
+        function closeModal() {
+            playSound('click');
+            const modal = document.getElementById('modal-feedback');
+            const content = document.getElementById('modal-feedback-content');
+            
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                if (window.currentModalCallback) {
+                    window.currentModalCallback();
+                    window.currentModalCallback = null;
+                }
+            }, 200);
+        }
+
+        function triggerVictory(modKey, msg) {
+            playSound('victory');
+            gameState.completedModules[modKey] = true;
+            setStars(modKey, 3);
+            
+            document.getElementById('victory-msg').textContent = msg;
+            document.getElementById('modal-victory').classList.remove('hidden');
+        }
+
+        function closeVictoryModal() {
+            playSound('click');
+            document.getElementById('modal-victory').classList.add('hidden');
+            showMenu();
+        }
+
+        function showCertificate() {
+            playSound('victory');
+            let totalStars = Object.values(gameState.stars).reduce((a, b) => a + b, 0);
+            document.getElementById('cert-stars-total').textContent = `⭐ ${totalStars} / 15 Estrelas Conquistadas`;
+            document.getElementById('cert-score-total').textContent = `Pontuação Total: ${gameState.score} pts`;
+            document.getElementById('modal-certificate').classList.remove('hidden');
+        }
+
+        function closeCertificate() {
+            playSound('click');
+            document.getElementById('modal-certificate').classList.add('hidden');
+        }
+
+        /* ================= MÓDULO 1: LÓGICA ================= */
+        const m1Data = [
+            { id: 1, name: "Copo Transparente", icon: "fa-wine-glass", material: "Vidro", function: "Servir bebidas sem alterar o gosto e permitir ver o líquido." },
+            { id: 2, name: "Colher Resistente", icon: "fa-utensils", material: "Metal", function: "Comer refeições quentes pois não derrete fácil." },
+            { id: 3, name: "Camiseta Macia", icon: "fa-shirt", material: "Algodão (Tecido)", function: "Vestir o corpo com conforto e leveza." },
+            { id: 4, name: "Mesa Firme", icon: "fa-table", material: "Madeira", function: "Apoiar objetos pesados por ser rígida e forte." },
+            { id: 5, name: "Carrinho Colorido", icon: "fa-car", material: "Plástico", function: "Brincar com segurança, ser leve e moldável." }
+        ];
+
+        let m1SelectedObject = null;
+        let m1MatchesCount = 0;
+
+        function initModule1() {
+            m1SelectedObject = null;
+            m1MatchesCount = 0;
+            renderM1();
+        }
+
+        function renderM1() {
+            const objectsContainer = document.getElementById('m1-objects');
+            const targetsContainer = document.getElementById('m1-targets');
+            const shuffledTargets = [...m1Data].sort(() => Math.random() - 0.5);
+
+            objectsContainer.innerHTML = m1Data.map(item => `
+                <div id="m1-obj-${item.id}" onclick="selectM1Object(${item.id})" class="p-4 bg-sky-50 border-2 border-sky-200 rounded-2xl flex items-center gap-3 card-interactive text-left">
+                    <div class="w-10 h-10 bg-sky-500 text-white rounded-xl flex items-center justify-center text-xl">
+                        <i class="fa-solid ${item.icon}"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-800 text-sm">${item.name}</div>
+                        <span class="text-xs text-sky-600 font-semibold">Clique para selecionar</span>
+                    </div>
+                </div>
+            `).join('');
+
+            targetsContainer.innerHTML = shuffledTargets.map(item => `
+                <div id="m1-target-${item.id}" onclick="matchM1Target(${item.id})" class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl flex items-center justify-between card-interactive">
+                    <div>
+                        <span class="px-2.5 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">Material: ${item.material}</span>
+                        <p class="text-xs text-slate-600 font-medium mt-1">Função: ${item.function}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 font-bold text-sm">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectM1Object(id) {
+            playSound('click');
+            m1Data.forEach(item => {
+                const el = document.getElementById(`m1-obj-${item.id}`);
+                if (el) el.classList.remove('ring-4', 'ring-sky-400', 'bg-sky-100');
+            });
+
+            m1SelectedObject = id;
+            const selectedEl = document.getElementById(`m1-obj-${id}`);
+            if (selectedEl) {
+                selectedEl.classList.add('ring-4', 'ring-sky-400', 'bg-sky-100');
+            }
+        }
+
+        function matchM1Target(targetId) {
+            if (!m1SelectedObject) {
+                showFeedback(false, "Ops!", "Escolha primeiro um objeto da lista da esquerda!");
+                return;
+            }
+
+            if (m1SelectedObject === targetId) {
+                addScore(20);
+                m1MatchesCount++;
+                
+                const objEl = document.getElementById(`m1-obj-${m1SelectedObject}`);
+                const targetEl = document.getElementById(`m1-target-${targetId}`);
+                
+                objEl.classList.add('opacity-40', 'pointer-events-none');
+                targetEl.className = "p-4 bg-emerald-50 border-2 border-emerald-400 rounded-2xl flex items-center justify-between opacity-80 pointer-events-none";
+                targetEl.querySelector('div:last-child').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500 text-xl"></i>';
+
+                m1SelectedObject = null;
+
+                if (m1MatchesCount === m1Data.length) {
+                    triggerVictory('m1', 'Incrível! Você dominou os Materiais e suas Funções!');
+                } else {
+                    showFeedback(true, "Certo!", "Você combinou o objeto com o seu material e função corretamente!");
+                }
+            } else {
+                showFeedback(false, "Incorreto!", "Esse material não corresponde a este objeto. Tente novamente!");
+            }
+        }
+
+        /* ================= MÓDULO 2: LÓGICA ================= */
+        const m2Questions = [
+            {
+                worker: "Médico",
+                icon: "fa-user-doctor",
+                color: "text-sky-500",
+                question: "Qual instrumento o Médico usa para ouvir os batimentos do coração e de que ele precisa ser feito?",
+                correct: "Estetoscópio (Metal e Borracha flexível)",
+                reason: "O metal conduz bem o som e a borracha se adapta confortavelmente às orelhas!",
+                options: [
+                    "Estetoscópio (Metal e Borracha flexível)",
+                    "Rolo de Massa (Madeira pesada)",
+                    "Martelo de Aço duro",
+                    "Tesoura de Poda afiada"
+                ]
+            },
+            {
+                worker: "Construtor / Pedreiro",
+                icon: "fa-helmet-safety",
+                color: "text-amber-500",
+                question: "O que o Construtor usa na cabeça para se proteger contra impactos pesados de materiais?",
+                correct: "Capacete de Plástico Rígido e Resistente",
+                reason: "O plástico rígido é leve para usar na cabeça e absorve fortes impactos!",
+                options: [
+                    "Pincel com cerdas macias",
+                    "Capacete de Plástico Rígido e Resistente",
+                    "Estetoscópio de metal",
+                    "Luva de tecido fino"
+                ]
+            },
+            {
+                worker: "Padeiro",
+                icon: "fa-wheat-awn",
+                color: "text-yellow-600",
+                question: "Qual ferramenta o Padeiro usa para esticar a massa de pão com firmeza?",
+                correct: "Rolo de Massa (Madeira rígida e lisa)",
+                reason: "A madeira é firme, resistente e não deixa a massa grudar facilmente!",
+                options: [
+                    "Tesoura de Jardim",
+                    "Capacete de proteção",
+                    "Rolo de Massa (Madeira rígida e lisa)",
+                    "Óculos de segurança"
+                ]
+            },
+            {
+                worker: "Jardineiro",
+                icon: "fa-plant-wilt",
+                color: "text-emerald-600",
+                question: "O que o Jardineiro utiliza para cortar galhos de plantas com precisão?",
+                correct: "Tesoura de Poda (Lâmina de Aço Afiado)",
+                reason: "O aço é um metal muito duro que mantém o corte afiado por muito tempo!",
+                options: [
+                    "Tesoura de Poda (Lâmina de Aço Afiado)",
+                    "Pincel de pintura macio",
+                    "Colher de plástico",
+                    "Capacete de obra"
+                ]
+            }
+        ];
+
+        let m2CurrentIndex = 0;
+
+        function initModule2() {
+            m2CurrentIndex = 0;
+            renderM2Question();
+        }
+
+        function renderM2Question() {
+            const q = m2Questions[m2CurrentIndex];
+            const card = document.getElementById('m2-worker-card');
+            const optionsBox = document.getElementById('m2-options');
+
+            card.innerHTML = `
+                <div class="w-16 h-16 bg-emerald-100 ${q.color} rounded-2xl flex items-center justify-center text-3xl mb-3 shadow-sm">
+                    <i class="fa-solid ${q.icon}"></i>
+                </div>
+                <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Profissional ${m2CurrentIndex + 1}/${m2Questions.length}</span>
+                <h3 class="text-2xl font-bold text-slate-800 mt-1">${q.worker}</h3>
+                <p class="text-slate-600 text-base mt-2 font-semibold">${q.question}</p>
+            `;
+
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+
+            optionsBox.innerHTML = shuffled.map(opt => `
+                <button onclick="checkM2Answer('${opt.replace(/'/g, "\\'")}')" class="p-4 bg-white border-2 border-emerald-200 hover:border-emerald-400 rounded-2xl font-bold text-slate-700 text-sm text-left shadow-sm btn-bounce flex items-center gap-3">
+                    <i class="fa-solid fa-circle-dot text-emerald-400"></i>
+                    <span>${opt}</span>
+                </button>
+            `).join('');
+        }
+
+        function checkM2Answer(selected) {
+            const q = m2Questions[m2CurrentIndex];
+            if (selected === q.correct) {
+                addScore(25);
+                m2CurrentIndex++;
+
+                if (m2CurrentIndex >= m2Questions.length) {
+                    triggerVictory('m2', 'Excelente! Você conhece os trabalhadores e as propriedades de seus objetos!');
+                } else {
+                    showFeedback(true, "Correto!", `${q.correct}: ${q.reason}`, () => {
+                        renderM2Question();
+                    });
+                }
+            } else {
+                showFeedback(false, "Tente de Novo!", "Pense bem sobre qual propriedade do material ajuda essa profissão!");
+            }
+        }
+
+        /* ================= MÓDULO 3: LÓGICA ================= */
+        function updateSunPosition(val) {
+            const sun = document.getElementById('sun-element');
+            const sky = document.getElementById('sky-box');
+            const stars = document.getElementById('stars-element');
+            const shadow = document.getElementById('tree-shadow');
+            const timeText = document.getElementById('sky-time-text');
+
+            const leftPercent = 10 + (val * 0.75);
+            const normalizedX = val / 100;
+            const heightFactor = -4 * Math.pow(normalizedX - 0.5, 2) + 1;
+            const topPercent = 65 - (heightFactor * 45);
+
+            sun.style.left = `${leftPercent}%`;
+            sun.style.top = `${topPercent}%`;
+
+            const skewDeg = (val - 50) * 1.2;
+            const shadowWidth = 20 + Math.abs(val - 50) * 0.8;
+            shadow.style.transform = `skewX(${skewDeg}deg)`;
+            shadow.style.width = `${shadowWidth}px`;
+
+            if (val < 25) {
+                timeText.textContent = "Manhã (08:00) - Sol Nascendo no Leste";
+                sky.className = "sky-canvas h-64 rounded-2xl relative overflow-hidden flex flex-col justify-between p-4 border-2 border-sky-300";
+                stars.style.opacity = '0';
+            } else if (val >= 25 && val <= 75) {
+                timeText.textContent = "Meio-Dia (12:00) - Sol no Alto do Céu";
+                sky.className = "sky-canvas h-64 rounded-2xl relative overflow-hidden flex flex-col justify-between p-4 border-2 border-sky-300";
+                stars.style.opacity = '0';
+            } else if (val > 75 && val <= 90) {
+                timeText.textContent = "Tarde (17:30) - Sol se Pondo no Oeste";
+                sky.className = "sky-canvas h-64 rounded-2xl relative overflow-hidden flex flex-col justify-between p-4 border-2 border-sky-300";
+                stars.style.opacity = '0';
+            } else {
+                timeText.textContent = "Noite (21:00) - Sol Abaixo do Horizonte";
+                sky.className = "sky-canvas sky-night h-64 rounded-2xl relative overflow-hidden flex flex-col justify-between p-4 border-2 border-indigo-900";
+                stars.style.opacity = '1';
+            }
+        }
+
+        const m3Questions = [
+            {
+                question: "Parece que o Sol se move no céu de Leste a Oeste durante o dia. Por que isso acontece?",
+                correct: "Porque a Terra gira ao redor de si mesma (Movimento de Rotação).",
+                options: [
+                    "Porque a Terra gira ao redor de si mesma (Movimento de Rotação).",
+                    "Porque o Sol corre em volta da Terra todas as manhãs.",
+                    "Porque as nuvens empurram o Sol para o oeste."
+                ]
+            },
+            {
+                question: "O que é a Linha do Horizonte?",
+                correct: "A linha aparente onde o céu e a Terra (ou mar) parecem se encontrar.",
+                options: [
+                    "Uma linha desenhada no chão do planeta.",
+                    "A linha aparente onde o céu e a Terra (ou mar) parecem se encontrar.",
+                    "O caminho por onde as estrelas caem."
+                ]
+            }
+        ];
+
+        let m3QuestionIndex = 0;
+
+        function initModule3() {
+            updateSunPosition(50);
+            document.getElementById('sun-slider').value = 50;
+            m3QuestionIndex = 0;
+            renderM3Question();
+        }
+
+        function renderM3Question() {
+            const q = m3Questions[m3QuestionIndex];
+            const qBox = document.getElementById('m3-question-box');
+            const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
+
+            qBox.innerHTML = `
+                <div class="font-bold text-amber-900 text-base">Pergunta ${m3QuestionIndex + 1}/${m3Questions.length}: ${q.question}</div>
+                <div class="space-y-2 pt-2">
+                    ${shuffledOpts.map(opt => `
+                        <button onclick="checkM3Answer('${opt.replace(/'/g, "\\'")}')" class="w-full p-3 bg-white border border-amber-300 hover:border-amber-500 rounded-xl font-bold text-slate-700 text-sm text-left btn-bounce flex items-center gap-2">
+                            <i class="fa-solid fa-circle-question text-amber-500"></i>
+                            <span>${opt}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkM3Answer(selected) {
+            const q = m3Questions[m3QuestionIndex];
+            if (selected === q.correct) {
+                addScore(30);
+                m3QuestionIndex++;
+
+                if (m3QuestionIndex >= m3Questions.length) {
+                    triggerVictory('m3', 'Sensacional! Você compreendeu a Linha do Horizonte e o Movimento da Terra!');
+                } else {
+                    showFeedback(true, "Corretíssimo!", "Exatamente! É o movimento de rotação da Terra que cria o dia e a noite e o movimento aparente do Sol!", () => {
+                        renderM3Question();
+                    });
+                }
+            } else {
+                showFeedback(false, "Quase lá!", "Lembre-se do que aprendemos sobre quem realmente está girando!");
+            }
+        }
+
+        /* ================= MÓDULO 4: LÓGICA ================= */
+        const m4Animals = [
+            { id: "coruja", name: "Coruja", svgKey: "coruja", type: "noturno", desc: "Caça e fica muito ativa durante a noite, com olhos grandes e ótima visão no escuro!" },
+            { id: "borboleta", name: "Borboleta", svgKey: "borboleta", type: "diurno", desc: "Voa entre as flores durante o dia para aproveitar o sol e o calor." },
+            { id: "morcego", name: "Morcego", svgKey: "morcego", type: "noturno", desc: "Dorme durante o dia em cavernas e sai à noite para se alimentar." },
+            { id: "cachorro", name: "Cachorro", svgKey: "cachorro", type: "diurno", desc: "Brinca, corre e faz a maior parte de suas atividades durante o dia." },
+            { id: "vagalume", name: "Vagalume", svgKey: "vagalume", type: "noturno", desc: "Acende sua luz brilhante à noite para se comunicar na escuridão." },
+            { id: "passarinho", name: "Passarinho", svgKey: "passarinho", type: "diurno", desc: "Canta bem cedo e busca alimentos enquanto há luz do Sol." },
+            { id: "sapo", name: "Sapo", svgKey: "sapo", type: "noturno", desc: "Prefere a umidade da noite para coaxar e caçar insetos com segurança." },
+            { id: "galo", name: "Galo", svgKey: "galo", type: "diurno", desc: "Canta ao amanhecer e realiza suas atividades ao longo do dia." },
+            { id: "abelha", name: "Abelha", svgKey: "abelha", type: "diurno", desc: "Coleta néctar nas flores durante o dia sob a luz do Sol." },
+            { id: "gato", name: "Gato", svgKey: "gato", type: "noturno", desc: "Possui hábitos noturnos e visão adaptada para enxergar no escuro." }
+        ];
+
+        let m4Index = 0;
+
+        function initModule4() {
+            m4Index = 0;
+            renderM4Animal();
+        }
+
+        function renderM4Animal() {
+            const animal = m4Animals[m4Index];
+            const card = document.getElementById('m4-animal-card');
+
+            card.innerHTML = `
+                <div class="w-28 h-28 bg-indigo-100/80 rounded-3xl flex items-center justify-center p-2 shadow-inner border-2 border-indigo-200">
+                    ${animalSVGs[animal.svgKey]}
+                </div>
+                <span class="text-xs font-bold text-indigo-500 uppercase tracking-wider">Animal ${m4Index + 1} de ${m4Animals.length}</span>
+                <h3 class="text-3xl font-bold text-slate-800">${animal.name}</h3>
+                <p class="text-sm text-slate-500 max-w-sm">Este animal tem hábitos Diurnos (Ativo de Dia) ou Noturnos (Ativo de Noite)?</p>
+            `;
+        }
+
+        function classifyAnimal(choice) {
+            const animal = m4Animals[m4Index];
+
+            if (choice === animal.type) {
+                addScore(15);
+                m4Index++;
+
+                if (m4Index >= m4Animals.length) {
+                    triggerVictory('m4', 'Parabéns! Você é um especialista em hábitos diurnos e noturnos dos animais!');
+                } else {
+                    showFeedback(true, "Acertou em cheio!", `${animal.name}: ${animal.desc}`, () => {
+                        renderM4Animal();
+                    });
+                }
+            } else {
+                showFeedback(false, "Ops!", `Pense na rotina do animal ${animal.name}. Ele prefere a luz do sol ou a escuridão da noite?`);
+            }
+        }
+
+        /* ================= MÓDULO 5: LÓGICA ================= */
+        const m5Hazards = [
+            {
+                id: 1,
+                title: "Tomada sem Proteção",
+                icon: "fa-plug-circle-exclamation",
+                room: "Sala / Quarto",
+                correctAction: "Colocar protetor de tomada e NUNCA colocar os dedos ou objetos nos buracos.",
+                options: [
+                    "Colocar protetor de tomada e NUNCA colocar os dedos ou objetos nos buracos.",
+                    "Lavar a tomada com água e sabão.",
+                    "Colocar um garfo de metal na tomada."
+                ]
+            },
+            {
+                id: 2,
+                title: "Cabo de Panela Quente para Fora",
+                icon: "fa-fire-burner",
+                room: "Cozinha",
+                correctAction: "Pedir para um adulto virar o cabo da panela para DENTRO do fogão.",
+                options: [
+                    "Tentar pegar a panela quente para brincar.",
+                    "Pedir para um adulto virar o cabo da panela para DENTRO do fogão.",
+                    "Puxar o cabo para ver o que tem dentro."
+                ]
+            },
+            {
+                id: 3,
+                title: "Remédios Soltos na Mesa",
+                icon: "fa-pills",
+                room: "Banheiro / Quarto",
+                correctAction: "NUNCA tomar remédios como se fossem balas! Apenas adultos podem entregar medicamentos.",
+                options: [
+                    "Comer os remédios achando que são doces.",
+                    "Guardar na mochila de brinquedos.",
+                    "NUNCA tomar remédios como se fossem balas! Apenas adultos podem entregar medicamentos."
+                ]
+            },
+            {
+                id: 4,
+                title: "Piso Molhado e Escorregadio",
+                icon: "fa-droplet",
+                room: "Banheiro",
+                correctAction: "Avisar um adulto, enxugar o chão e caminhar devagar para não escorregar.",
+                options: [
+                    "Avisar um adulto, enxugar o chão e caminhar devagar para não escorregar.",
+                    "Correr bem rápido e dar pulos no molhado.",
+                    "Jogar mais sabão no chão."
+                ]
+            },
+            {
+                id: 5,
+                title: "Faca Afiada na Pia",
+                icon: "fa-kitchen-set",
+                room: "Cozinha",
+                correctAction: "Não mexer em objetos cortantes e deixar que um adulto os manuseie.",
+                options: [
+                    "Brincar com a faca afiada.",
+                    "Não mexer em objetos cortantes e deixar que um adulto os manuseie.",
+                    "Usar a faca para cortar papéis no quarto."
+                ]
+            }
+        ];
+
+        let m5Resolved = [];
+
+        function initModule5() {
+            m5Resolved = [];
+            renderM5Hazards();
+        }
+
+        function renderM5Hazards() {
+            const grid = document.getElementById('m5-hazards-grid');
+
+            grid.innerHTML = m5Hazards.map(item => {
+                const isDone = m5Resolved.includes(item.id);
+
+                return `
+                    <div id="m5-card-${item.id}" class="bg-slate-50 border-2 ${isDone ? 'border-emerald-400 opacity-60' : 'border-rose-200 card-interactive'} p-5 rounded-2xl flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="px-2.5 py-0.5 ${isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} text-xs font-bold rounded-full">${item.room}</span>
+                                ${isDone ? '<i class="fa-solid fa-shield-check text-emerald-500 text-xl"></i>' : '<i class="fa-solid fa-triangle-exclamation text-rose-500 animate-bounce"></i>'}
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 ${isDone ? 'bg-emerald-500' : 'bg-rose-500'} text-white rounded-xl flex items-center justify-center text-xl shrink-0">
+                                    <i class="fa-solid ${item.icon}"></i>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-base">${item.title}</h4>
+                            </div>
+                        </div>
+
+                        ${isDone ? `
+                            <div class="text-xs text-emerald-700 font-bold bg-emerald-50 p-2 rounded-xl">
+                                Protegido! Atitude correta aplicada.
+                            </div>
+                        ` : `
+                            <button onclick="openM5SolveModal(${item.id})" class="w-full py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs btn-bounce">
+                                Prevenir Acidente! 🛡️
+                            </button>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openM5SolveModal(id) {
+            playSound('click');
+            const item = m5Hazards.find(h => h.id === id);
+            const shuffled = [...item.options].sort(() => Math.random() - 0.5);
+            showM5InteractiveQuestion(item, shuffled);
+        }
+
+        function showM5InteractiveQuestion(item, options) {
+            const modal = document.getElementById('modal-feedback');
+            const content = document.getElementById('modal-feedback-content');
+            const icon = document.getElementById('modal-icon');
+            
+            document.getElementById('modal-title').textContent = `Perigo: ${item.title}`;
+
+            icon.className = "w-20 h-20 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner";
+            icon.innerHTML = `<i class="fa-solid ${item.icon}"></i>`;
+
+            let htmlOpts = `<p class="text-slate-600 font-semibold mb-3">Qual é a atitude correta de prevenção?</p><div class="space-y-2 text-left">`;
+            options.forEach(opt => {
+                htmlOpts += `
+                    <button onclick="checkM5Answer(${item.id}, '${opt.replace(/'/g, "\\'")}')" class="w-full p-3 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-400 rounded-xl font-bold text-slate-700 text-xs btn-bounce flex items-center gap-2">
+                        <i class="fa-solid fa-shield text-rose-400"></i>
+                        <span>${opt}</span>
+                    </button>
+                `;
+            });
+            htmlOpts += `</div>`;
+
+            document.getElementById('modal-msg').innerHTML = htmlOpts;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function checkM5Answer(id, selectedOpt) {
+            const item = m5Hazards.find(h => h.id === id);
+
+            if (selectedOpt === item.correctAction) {
+                addScore(25);
+                m5Resolved.push(id);
+                closeModal();
+
+                setTimeout(() => {
+                    if (m5Resolved.length === m5Hazards.length) {
+                        triggerVictory('m5', 'Sensacional, Detetive! Sua casa está super segura e livre de acidentes!');
+                    } else {
+                        showFeedback(true, "Muito Bem!", "Você escolheu a atitude segura para cuidar da sua saúde e da sua família!");
+                    }
+                    renderM5Hazards();
+                }, 300);
+            } else {
+                closeModal();
+                setTimeout(() => {
+                    showFeedback(false, "Cuidado!", "Essa atitude pode provocar um acidente perigoso. Tente novamente!");
+                }, 300);
+            }
+        }
+
+        window.onload = function() {
+            showMenu();
+        };
+    </script>
+</body>
+</html>
